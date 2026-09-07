@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Mail, MessageSquare, MapPin, Loader2, CheckCircle2 } from "lucide-react"
+import { Mail, MapPin, Loader2, CheckCircle2 } from "lucide-react"
 
 export default function ContactPage() {
   const [formState, setFormState] = useState({
@@ -40,12 +40,6 @@ export default function ContactPage() {
       title: "Email Us",
       description: "support@tsviinvestments.com",
       subtitle: "We respond within 24 hours",
-    },
-    {
-      icon: MessageSquare,
-      title: "Live Chat",
-      description: "Available 24/7",
-      subtitle: "Get instant support",
     },
     {
       icon: MapPin,

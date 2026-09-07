@@ -345,7 +345,7 @@ export default function WithdrawPage() {
       })
 
       if (!matchingOtpDoc) {
-        setError("Invalid OTP. Please contact support via live chat to get your verification code.")
+        setError("Invalid OTP. Please contact support by email to get your verification code.")
         setIsSubmitting(false)
         return
       }
@@ -691,7 +691,7 @@ export default function WithdrawPage() {
                     <Alert className="border-blue-500/50 bg-blue-500/10">
                       <ShieldCheck className="h-4 w-4 text-blue-500" />
                       <AlertDescription className="text-blue-400">
-                        For security, please contact our support team via live chat or email to receive your OTP verification code.
+                        For security, please contact our support team by email to receive your OTP verification code.
                       </AlertDescription>
                     </Alert>
 
