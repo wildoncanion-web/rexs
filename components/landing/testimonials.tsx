@@ -26,7 +26,7 @@ const testimonials = [
     role: "Investor since 2023",
     image: "/professional-white-businessman-portrait.jpg",
     content:
-      "The customer support is exceptional and withdrawals are processed within hours. Highly recommend TSVI to serious investors.",
+      "The customer support is exceptional and withdrawals are processed within hours. Highly recommend INVESTMENT HOLDINGS, LLC to serious investors.",
     rating: 5,
   },
 ]
