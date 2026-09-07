@@ -3,27 +3,27 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Updated to dark theme with emerald primary and amber accent for crypto platform */
+/* Institutional navy and mint theme for Investment Holdings */
 :root {
-  --background: oklch(0.12 0.01 260);
-  --foreground: oklch(0.98 0 0);
-  --card: oklch(0.16 0.01 260);
-  --card-foreground: oklch(0.98 0 0);
-  --popover: oklch(0.16 0.01 260);
-  --popover-foreground: oklch(0.98 0 0);
-  --primary: oklch(0.7 0.17 162);
-  --primary-foreground: oklch(0.12 0.01 260);
-  --secondary: oklch(0.2 0.01 260);
-  --secondary-foreground: oklch(0.98 0 0);
-  --muted: oklch(0.25 0.01 260);
-  --muted-foreground: oklch(0.65 0.01 260);
-  --accent: oklch(0.75 0.15 85);
-  --accent-foreground: oklch(0.12 0.01 260);
-  --destructive: oklch(0.55 0.22 27);
+  --background: oklch(0.12 0.025 250);
+  --foreground: oklch(0.97 0.01 220);
+  --card: oklch(0.16 0.025 250);
+  --card-foreground: oklch(0.97 0.01 220);
+  --popover: oklch(0.16 0.025 250);
+  --popover-foreground: oklch(0.97 0.01 220);
+  --primary: oklch(0.72 0.17 162);
+  --primary-foreground: oklch(0.12 0.025 250);
+  --secondary: oklch(0.21 0.025 250);
+  --secondary-foreground: oklch(0.97 0.01 220);
+  --muted: oklch(0.24 0.025 250);
+  --muted-foreground: oklch(0.68 0.02 235);
+  --accent: oklch(0.72 0.17 162);
+  --accent-foreground: oklch(0.12 0.025 250);
+  --destructive: oklch(0.63 0.19 25);
   --destructive-foreground: oklch(0.98 0 0);
-  --border: oklch(0.28 0.01 260);
-  --input: oklch(0.22 0.01 260);
-  --ring: oklch(0.7 0.17 162);
+  --border: oklch(0.29 0.025 250);
+  --input: oklch(0.23 0.025 250);
+  --ring: oklch(0.72 0.17 162);
   --chart-1: oklch(0.7 0.17 162);
   --chart-2: oklch(0.75 0.15 85);
   --chart-3: oklch(0.65 0.15 250);
