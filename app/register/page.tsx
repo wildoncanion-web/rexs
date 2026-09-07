@@ -83,7 +83,7 @@ export default function RegisterPage() {
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
               <span className="text-xl font-bold text-primary-foreground">T</span>
             </div>
-            <span className="text-2xl font-bold text-foreground">TSVI</span>
+            <span className="text-2xl font-bold text-foreground">INVESTMENT HOLDINGS, LLC</span>
           </Link>
           <CardTitle className="text-2xl font-bold text-foreground">Create your account</CardTitle>
           <CardDescription className="text-muted-foreground">Start your investment journey today</CardDescription>

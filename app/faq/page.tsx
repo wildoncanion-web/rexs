@@ -98,7 +98,7 @@ export default function FAQPage() {
                 Frequently Asked Questions
               </h1>
               <p className="mt-6 text-lg text-muted-foreground">
-                Find answers to common questions about TSVI Investments. Can&apos;t find what you&apos;re looking for?
+                Find answers to common questions about INVESTMENT HOLDINGS, LLC. Can&apos;t find what you&apos;re looking for?
                 Contact our support team.
               </p>
             </div>

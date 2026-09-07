@@ -48,7 +48,7 @@ export default function AboutPage() {
           </div>
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="mx-auto max-w-3xl text-center">
-              <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">About TSVI Investments</h1>
+              <h1 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">About INVESTMENT HOLDINGS, LLC</h1>
               <p className="mt-6 text-lg text-muted-foreground">
                 We are a leading cryptocurrency investment platform dedicated to helping individuals grow their wealth
                 through secure and profitable digital asset investments.
@@ -79,7 +79,7 @@ export default function AboutPage() {
                 <h2 className="text-3xl font-bold text-foreground">Our Story</h2>
                 <div className="mt-6 space-y-4 text-muted-foreground">
                   <p>
-                    Founded in 2019, TSVI Investments was born from a vision to democratize cryptocurrency investing.
+                    Founded in 2019, INVESTMENT HOLDINGS, LLC was born from a vision to democratize cryptocurrency investing.
                     Our founders, experienced traders and blockchain enthusiasts, recognized that many people were
                     missing out on the crypto revolution due to the complexity and perceived risks involved.
                   </p>
@@ -99,7 +99,7 @@ export default function AboutPage() {
                 <div className="aspect-square overflow-hidden rounded-2xl">
                   <Image
                     src="/modern-office-team-meeting.jpg"
-                    alt="TSVI Investments team"
+                    alt="INVESTMENT HOLDINGS, LLC team"
                     width={600}
                     height={600}
                     className="object-cover"

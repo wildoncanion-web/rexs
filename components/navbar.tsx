@@ -18,7 +18,7 @@ export function Navbar() {
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
               <span className="text-lg font-bold text-primary-foreground">T</span>
             </div>
-            <span className="text-xl font-bold text-foreground">TSVI</span>
+            <span className="text-xl font-bold text-foreground">INVESTMENT HOLDINGS, LLC</span>
           </Link>
 
           {/* Desktop Navigation */}
