@@ -13,7 +13,7 @@ import { Save, Shield, Bell, Mail, Globe } from "lucide-react"
 export default function AdminSettingsPage() {
   const [settings, setSettings] = useState({
     siteName: "INVESTMENT HOLDINGS, LLC",
-    supportEmail: "support@tsvi-investments.com",
+    supportEmail: "support@investmentholdingsllc.org",
     maintenanceMode: false,
     emailNotifications: true,
     depositNotifications: true,

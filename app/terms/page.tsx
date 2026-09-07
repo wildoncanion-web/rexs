@@ -101,7 +101,7 @@ export default function TermsPage() {
               <div className="rounded-xl border border-border bg-card p-6">
                 <h2 className="mb-4 text-xl font-bold text-foreground">9. Contact Information</h2>
                 <p className="text-muted-foreground">
-                  For questions about these Terms of Service, please contact us at legal@tsvi-investments.com or through
+                  For questions about these Terms of Service, please contact us at support@investmentholdingsllc.org or through
                   our Contact page.
                 </p>
               </div>

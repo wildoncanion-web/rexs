@@ -59,7 +59,7 @@ const faqs = [
       {
         question: "What should I do if I suspect unauthorized activity?",
         answer:
-          "If you notice any suspicious activity on your account, immediately change your password and contact our support team at support@tsvi-investments.com. We have a 24/7 security team ready to assist you.",
+          "If you notice any suspicious activity on your account, immediately change your password and contact our support team at support@investmentholdingsllc.org. We have a 24/7 security team ready to assist you.",
       },
     ],
   },
