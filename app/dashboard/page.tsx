@@ -88,7 +88,7 @@ export default function DashboardPage() {
                 </div>
                 <div className="mt-8 flex flex-col gap-5">
                   <ToggleGroup type="single" value={range} onValueChange={(value) => value && setRange(value)} className="justify-start gap-1">
-                    {['1D', '1W', '1M', '1Y', 'ALL'].map((item) => <ToggleGroupItem key={item} value={item} className="h-8 rounded-md px-3 text-xs data-[state=on]:bg-secondary data-[state=on]:text-foreground">{item}</ToggleGroupItem>)}
+                    {['1D', '1W', '1M', '1Y', 'ALL'].map((item) => <ToggleGroupItem key={item} value={item} className="h-8 rounded-full px-3 text-xs data-[state=on]:bg-secondary data-[state=on]:text-foreground">{item}</ToggleGroupItem>)}
                   </ToggleGroup>
                   <div className="h-[260px] w-full">
                     <ResponsiveContainer width="100%" height="100%">
