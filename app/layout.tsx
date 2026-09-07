@@ -10,7 +10,7 @@ const _geistMono = Geist_Mono({ subsets: ["latin"] })
 export const metadata: Metadata = {
   title: "INVESTMENT HOLDINGS, LLC | Portfolio Dashboard",
   description:
-    "A modern investment portfolio dashboard for tracking holdings, market activity, and account performance.",
+    "INVESTMENT HOLDINGS, LLC — institutional portfolio management, market insights, and secure investment account access.",
     generator: 'v0.app'
 }
 

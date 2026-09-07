@@ -67,7 +67,7 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-background">
       <DashboardHeader />
-      <main className="mx-auto flex max-w-[1500px] flex-col gap-6 px-4 py-6 lg:px-8">
+      <main className="mx-auto flex max-w-[1600px] flex-col gap-6 px-4 py-6 lg:px-8">
         <div className="flex flex-col gap-4 border-b border-border pb-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="font-mono text-xs uppercase tracking-[0.22em] text-muted-foreground">Portfolio overview</p>
@@ -77,7 +77,7 @@ export default function DashboardPage() {
           {isAdmin && <Link href="/admin"><Button variant="outline" className="gap-2"><Shield data-icon="inline-start" /> Admin panel</Button></Link>}
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-[minmax(0,1.7fr)_minmax(300px,0.9fr)]">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,65fr)_minmax(300px,35fr)]">
           <section className="flex min-w-0 flex-col gap-6">
             <Card className="border-border bg-card shadow-none">
               <CardContent className="p-6 md:p-8">
@@ -112,7 +112,7 @@ export default function DashboardPage() {
             </div>
           </section>
 
-          <aside className="flex min-w-0 flex-col gap-6">
+          <aside className="flex min-w-0 flex-col gap-6 lg:sticky lg:top-24 lg:self-start">
             <Card className="border-border bg-card shadow-none"><CardHeader className="flex-row items-center justify-between space-y-0"><CardTitle className="text-base">Watchlist</CardTitle><Button variant="ghost" size="icon" aria-label="Search watchlist"><Search /></Button></CardHeader><CardContent className="flex flex-col gap-1">{watchlist.map((item) => <div key={item.symbol} className="flex items-center gap-3 rounded-lg px-2 py-3 transition-colors hover:bg-secondary"><div className="flex size-9 items-center justify-center rounded-md bg-secondary font-mono text-xs font-semibold text-foreground">{item.symbol.slice(0, 1)}</div><div className="min-w-0 flex-1"><p className="font-mono text-sm font-semibold text-foreground">{item.symbol}</p><p className="truncate text-xs text-muted-foreground">{item.name}</p></div><MiniSparkline points={item.points} positive={item.positive} /><div className="text-right"><p className="text-sm font-medium text-foreground">{item.price}</p><Badge variant={item.positive ? "default" : "destructive"} className="mt-1 px-1.5 py-0 text-[10px]">{item.change}</Badge></div></div>)}</CardContent></Card>
             <Card className="border-border bg-card shadow-none"><CardHeader><CardTitle className="text-base">Quick Trade</CardTitle><p className="text-sm text-muted-foreground">Place an order in your portfolio</p></CardHeader><CardContent className="flex flex-col gap-4"><ToggleGroup type="single" value={tradeType} onValueChange={(value) => value && setTradeType(value)} className="grid grid-cols-2 rounded-md bg-secondary p-1"><ToggleGroupItem value="buy" className="h-9 rounded-sm text-sm data-[state=on]:bg-card data-[state=on]:text-primary">Buy</ToggleGroupItem><ToggleGroupItem value="sell" className="h-9 rounded-sm text-sm data-[state=on]:bg-card data-[state=on]:text-destructive">Sell</ToggleGroupItem></ToggleGroup><label className="flex flex-col gap-2 text-sm font-medium text-foreground">Ticker Symbol<Input placeholder="e.g. AAPL" className="h-11 bg-secondary/50 font-mono uppercase" /></label><label className="flex flex-col gap-2 text-sm font-medium text-foreground">Amount ($)<Input type="number" placeholder="0.00" className="h-11 bg-secondary/50 font-mono" /></label><Button className="h-11 w-full bg-primary font-semibold text-primary-foreground hover:bg-primary/90">Execute Order</Button><p className="text-center text-xs text-muted-foreground">Orders execute during regular market hours.</p></CardContent></Card>
           </aside>
