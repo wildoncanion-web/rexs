@@ -11,7 +11,6 @@ export const metadata: Metadata = {
   title: "INVESTMENT HOLDINGS, LLC | Portfolio Dashboard",
   description:
     "INVESTMENT HOLDINGS, LLC — institutional portfolio management, market insights, and secure investment account access.",
-    generator: 'v0.app'
 }
 
 export default function RootLayout({
