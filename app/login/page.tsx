@@ -60,7 +60,7 @@ export default function LoginPage() {
         <CardHeader className="text-center">
           <Link href="/" className="mx-auto mb-4 flex items-center gap-2">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
-              <span className="text-xl font-bold text-primary-foreground">T</span>
+              <span className="text-xl font-bold text-primary-foreground">IT</span>
             </div>
             <span className="text-2xl font-bold text-foreground">INVESTMENT HOLDINGS, LLC</span>
           </Link>

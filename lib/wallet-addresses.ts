@@ -1,4 +1,4 @@
-// Wallet addresses for deposits - TSVI Investments official wallets
+// Wallet addresses for deposits - INVESTMENT HOLDINGS, LLC official wallets
 export const walletAddresses = {
   BTC: {
     address: "bc1qwkj0vpurr8kq7h40k2hew75k3366y6r8j6xajj",
