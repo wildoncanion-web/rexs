@@ -12,16 +12,6 @@ interface CryptoSelectorProps {
 
 const cryptoIcons: Record<CryptoKey, React.ComponentType<{ className?: string }>> = {
   BTC: Bitcoin,
-  ETH: () => (
-    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-indigo-500 text-xs font-bold text-white">
-      E
-    </div>
-  ),
-  USDC: () => (
-    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-500 text-xs font-bold text-white">
-      $
-    </div>
-  ),
   USDT: () => (
     <div className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500 text-xs font-bold text-white">
       ₮
@@ -32,25 +22,17 @@ const cryptoIcons: Record<CryptoKey, React.ComponentType<{ className?: string }>
       Ł
     </div>
   ),
-  DOGE: () => (
-    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-amber-500 text-xs font-bold text-white">
-      D
-    </div>
-  ),
 }
 
 const colorClasses: Record<string, { bg: string; text: string; border: string }> = {
   orange: { bg: "bg-orange-500/10", text: "text-orange-500", border: "border-orange-500" },
-  indigo: { bg: "bg-indigo-500/10", text: "text-indigo-500", border: "border-indigo-500" },
-  blue: { bg: "bg-blue-500/10", text: "text-blue-500", border: "border-blue-500" },
   emerald: { bg: "bg-emerald-500/10", text: "text-emerald-500", border: "border-emerald-500" },
   slate: { bg: "bg-slate-400/10", text: "text-slate-400", border: "border-slate-400" },
-  amber: { bg: "bg-amber-500/10", text: "text-amber-500", border: "border-amber-500" },
 }
 
 export function CryptoSelector({ selectedCrypto, onSelect }: CryptoSelectorProps) {
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+    <div className="grid grid-cols-3 gap-3">
       {(Object.keys(walletAddresses) as CryptoKey[]).map((key) => {
         const crypto = walletAddresses[key]
         const Icon = cryptoIcons[key]
