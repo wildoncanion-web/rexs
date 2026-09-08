@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Check, X, Clock, Filter } from "lucide-react"
+import { formatUSDateTime } from "@/lib/date"
 
 interface DepositData {
   id: string
@@ -50,13 +51,7 @@ export default function AdminDepositsPage() {
 
   const formatDate = (timestamp: { seconds: number }) => {
     if (!timestamp) return "N/A"
-    return new Date(timestamp.seconds * 1000).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    })
+    return formatUSDateTime(timestamp)
   }
 
   return (

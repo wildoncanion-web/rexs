@@ -9,6 +9,7 @@ import { collection, getDocs, orderBy, query, where } from "firebase/firestore"
 import { useAuth } from "@/contexts/auth-context"
 import { getFirebaseDb } from "@/lib/firebase"
 import { cryptoToUsd } from "@/lib/crypto-prices"
+import { formatUSShortDate, getUSGreeting } from "@/lib/date"
 import { DashboardHeader } from "@/components/dashboard/dashboard-header"
 import { RecentTransactions } from "@/components/dashboard/recent-transactions"
 import { Button } from "@/components/ui/button"
@@ -30,10 +31,19 @@ export default function DashboardPage() {
   const [range, setRange] = useState("1W")
   const [ledger, setLedger] = useState<LedgerTransaction[]>([])
   const [ledgerLoading, setLedgerLoading] = useState(true)
+  // Start null and set on mount to avoid a server/client hydration mismatch, since the
+  // greeting depends on the current time in US Eastern rather than any fixed server render.
+  const [greeting, setGreeting] = useState<string | null>(null)
 
   useEffect(() => {
     if (!loading && !user) router.push("/login")
   }, [user, loading, router])
+
+  useEffect(() => {
+    setGreeting(getUSGreeting())
+    const interval = setInterval(() => setGreeting(getUSGreeting()), 60_000)
+    return () => clearInterval(interval)
+  }, [])
 
   useEffect(() => {
     const fetchLedger = async () => {
@@ -66,15 +76,16 @@ export default function DashboardPage() {
     const points = [{ date: "Start", value: running }]
     for (const tx of ledger) {
       running += signedDelta(tx)
-      points.push({ date: new Date(tx.createdAt.seconds * 1000).toLocaleDateString(undefined, { month: "short", day: "numeric" }), value: running })
+      points.push({ date: formatUSShortDate(tx.createdAt), value: running })
     }
     return points
   }, [ledger, totalBalance])
 
   const todaysChange = useMemo(() => {
-    const startOfDay = new Date()
-    startOfDay.setHours(0, 0, 0, 0)
-    const cutoff = startOfDay.getTime() / 1000
+    // Determine "today" using US Eastern Time, not the visitor's local timezone.
+    const nowInUS = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }))
+    nowInUS.setHours(0, 0, 0, 0)
+    const cutoff = nowInUS.getTime() / 1000
     const signedDelta = (tx: LedgerTransaction) => (tx.type === "withdrawal" ? -tx.amount : tx.amount)
     return ledger.filter((tx) => tx.createdAt.seconds >= cutoff).reduce((sum, tx) => sum + signedDelta(tx), 0)
   }, [ledger])
@@ -105,7 +116,7 @@ export default function DashboardPage() {
         <div className="flex flex-col gap-4 border-b border-border pb-6 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <p className="font-mono text-xs uppercase tracking-[0.22em] text-muted-foreground">Portfolio overview</p>
-            <h1 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">Good morning, {displayName}</h1>
+            <h1 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">{greeting || "Welcome"}, {displayName}</h1>
             <p className="mt-1 text-sm text-muted-foreground">Here&apos;s what&apos;s happening with your investments today.</p>
           </div>
           <div className="flex items-center gap-3">

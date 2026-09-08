@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ArrowUpRight, ArrowDownLeft, Gift, CreditCard, TrendingUp, Loader2 } from "lucide-react"
 import { getFirebaseDb } from "@/lib/firebase"
 import { collection, query, where, orderBy, getDocs } from "firebase/firestore"
+import { formatUSDate } from "@/lib/date"
 
 interface Transaction {
   id: string
@@ -149,7 +150,7 @@ export default function TransactionsPage() {
                         <div>
                           <p className="font-medium capitalize text-foreground">{tx.type}</p>
                           <p className="text-sm text-muted-foreground">
-                            {new Date(tx.createdAt.seconds * 1000).toLocaleDateString()}
+                            {formatUSDate(tx.createdAt)}
                           </p>
                           {tx.description && (
                             <p className="text-xs text-muted-foreground">{tx.description}</p>

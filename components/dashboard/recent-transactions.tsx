@@ -6,6 +6,7 @@ import { ArrowUpRight, ArrowDownLeft, Gift, CreditCard, TrendingUp, Loader2 } fr
 import { useAuth } from "@/contexts/auth-context"
 import { getFirebaseDb } from "@/lib/firebase"
 import { collection, query, where, orderBy, limit, getDocs } from "firebase/firestore"
+import { formatUSDate } from "@/lib/date"
 
 interface Transaction {
   id: string
@@ -127,7 +128,7 @@ export function RecentTransactions() {
                   <div>
                     <p className="truncate text-sm font-medium capitalize text-foreground">{tx.type}</p>
                     <p className="text-sm text-muted-foreground">
-                      {new Date(tx.createdAt.seconds * 1000).toLocaleDateString()}
+                      {formatUSDate(tx.createdAt)}
                     </p>
                   </div>
                 </div>
