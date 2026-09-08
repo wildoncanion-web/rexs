@@ -12,7 +12,7 @@ import {
   updateProfile,
   type User,
 } from "firebase/auth"
-import { doc, setDoc, getDoc, addDoc, collection, Timestamp } from "firebase/firestore"
+import { doc, setDoc, getDoc, onSnapshot, addDoc, collection, Timestamp } from "firebase/firestore"
 import { getFirebaseAuth, getFirebaseDb } from "@/lib/firebase"
 import { isAdmin } from "@/lib/admin"
 
@@ -23,6 +23,10 @@ interface UserProfile {
   photoURL?: string
   createdAt: Date
   totalBalance: number
+  availableBalance?: number
+  credits?: number
+  bonus?: number
+  profit?: number
   holdings: {
     BTC: number
     ETH: number
@@ -58,16 +62,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const auth = getFirebaseAuth()
     const db = getFirebaseDb()
+    let profileUnsubscribe: (() => void) | null = null
 
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user)
       setAdminStatus(isAdmin(user?.email))
+
+      if (profileUnsubscribe) {
+        profileUnsubscribe()
+        profileUnsubscribe = null
+      }
+
       if (user) {
         try {
-          const profileDoc = await getDoc(doc(db, "users", user.uid))
-          if (profileDoc.exists()) {
-            setUserProfile(profileDoc.data() as UserProfile)
-          } else {
+          const profileRef = doc(db, "users", user.uid)
+          const profileDoc = await getDoc(profileRef)
+          if (!profileDoc.exists()) {
             const newProfile: UserProfile = {
               uid: user.uid,
               email: user.email!,
@@ -76,9 +86,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               totalBalance: 0,
               holdings: { BTC: 0, ETH: 0, USDC: 0, USDT: 0, LTC: 0, DOGE: 0 },
             }
-            await setDoc(doc(db, "users", user.uid), newProfile)
-            setUserProfile(newProfile)
+            await setDoc(profileRef, newProfile)
           }
+
+          // Live listener so balance/holdings changes made by an admin show up immediately,
+          // without requiring the user to log out and back in.
+          profileUnsubscribe = onSnapshot(profileRef, (snapshot) => {
+            if (snapshot.exists()) {
+              setUserProfile(snapshot.data() as UserProfile)
+            }
+          })
         } catch (error) {
           console.error("Error fetching user profile:", error)
         }
@@ -88,7 +105,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setLoading(false)
     })
 
-    return () => unsubscribe()
+    return () => {
+      unsubscribe()
+      if (profileUnsubscribe) profileUnsubscribe()
+    }
   }, [])
 
   const register = async (email: string, password: string, displayName: string) => {
