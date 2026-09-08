@@ -15,6 +15,7 @@ import {
   Shield,
   Gift,
   Bell,
+  LayoutPanelLeft,
 } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 import { useRouter } from "next/navigation"
@@ -78,6 +79,13 @@ export function AdminSidebar() {
             <p className="text-xs text-zinc-500">Logged in as</p>
             <p className="truncate text-sm font-medium text-white">{user?.email}</p>
           </div>
+          <Link
+            href="/dashboard"
+            className="mb-1 flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-400 transition-all hover:bg-zinc-800/50 hover:text-white"
+          >
+            <LayoutPanelLeft className="h-5 w-5" />
+            My Dashboard
+          </Link>
           <button
             onClick={handleLogout}
             className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-red-400 transition-all hover:bg-red-500/10"
