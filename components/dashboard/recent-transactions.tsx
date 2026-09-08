@@ -55,7 +55,7 @@ export function RecentTransactions() {
       case "deposit":
         return <ArrowDownLeft className="h-5 w-5 text-primary" />
       case "withdrawal":
-        return <ArrowUpRight className="h-5 w-5 text-red-500" />
+        return <ArrowUpRight className="h-5 w-5 text-destructive" />
       case "bonus":
         return <Gift className="h-5 w-5 text-amber-500" />
       case "credit":
@@ -77,7 +77,7 @@ export function RecentTransactions() {
       case "earning":
         return "text-primary"
       case "withdrawal":
-        return "text-red-500"
+        return "text-destructive"
       default:
         return "text-foreground"
     }
@@ -117,15 +117,15 @@ export function RecentTransactions() {
             <p className="mt-1 text-sm text-muted-foreground">Make your first deposit to start investing</p>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="flex flex-col gap-3">
             {transactions.map((tx) => (
-              <div key={tx.id} className="flex items-center justify-between rounded-lg bg-secondary/50 p-3">
-                <div className="flex items-center gap-3">
+              <div key={tx.id} className="flex items-center gap-4 border-b border-border/70 py-3 last:border-0">
+                <div className="flex min-w-0 flex-1 items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
                     {getIcon(tx.type)}
                   </div>
                   <div>
-                    <p className="font-medium capitalize text-foreground">{tx.type}</p>
+                    <p className="truncate text-sm font-medium capitalize text-foreground">{tx.type}</p>
                     <p className="text-sm text-muted-foreground">
                       {new Date(tx.createdAt.seconds * 1000).toLocaleDateString()}
                     </p>

@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Mail, MessageSquare, MapPin, Loader2, CheckCircle2 } from "lucide-react"
+import { Mail, MapPin, Loader2, CheckCircle2 } from "lucide-react"
 
 export default function ContactPage() {
   const [formState, setFormState] = useState({
@@ -38,20 +38,14 @@ export default function ContactPage() {
     {
       icon: Mail,
       title: "Email Us",
-      description: "support@tsviinvestments.com",
+      description: "support@investmentholdingsllc.org",
       subtitle: "We respond within 24 hours",
-    },
-    {
-      icon: MessageSquare,
-      title: "Live Chat",
-      description: "Available 24/7",
-      subtitle: "Get instant support",
     },
     {
       icon: MapPin,
       title: "Office",
-      description: "123 Financial District",
-      subtitle: "New York, NY 10004",
+      description: "325 E. GRAND RIVER AVE., STE. 275",
+      subtitle: "EAST LANSING, MI 48823",
     },
   ]
 

@@ -23,7 +23,7 @@ export default function TermsPage() {
               <div className="rounded-xl border border-border bg-card p-6">
                 <h2 className="mb-4 text-xl font-bold text-foreground">1. Acceptance of Terms</h2>
                 <p className="text-muted-foreground">
-                  By accessing or using TSVI Investments (&quot;the Platform&quot;), you agree to be bound by these
+                  By accessing or using INVESTMENT HOLDINGS, LLC (&quot;the Platform&quot;), you agree to be bound by these
                   Terms of Service. If you do not agree to these terms, please do not use our services.
                 </p>
               </div>
@@ -77,7 +77,7 @@ export default function TermsPage() {
               <div className="rounded-xl border border-border bg-card p-6">
                 <h2 className="mb-4 text-xl font-bold text-foreground">7. Limitation of Liability</h2>
                 <p className="text-muted-foreground">
-                  To the maximum extent permitted by law, TSVI Investments shall not be liable for any indirect,
+                  To the maximum extent permitted by law, INVESTMENT HOLDINGS, LLC shall not be liable for any indirect,
                   incidental, special, consequential, or punitive damages arising from your use of the Platform or any
                   investment losses.
                 </p>
@@ -101,7 +101,7 @@ export default function TermsPage() {
               <div className="rounded-xl border border-border bg-card p-6">
                 <h2 className="mb-4 text-xl font-bold text-foreground">9. Contact Information</h2>
                 <p className="text-muted-foreground">
-                  For questions about these Terms of Service, please contact us at legal@tsvi-investments.com or through
+                  For questions about these Terms of Service, please contact us at support@investmentholdingsllc.org or through
                   our Contact page.
                 </p>
               </div>

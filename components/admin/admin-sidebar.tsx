@@ -47,7 +47,7 @@ export function AdminSidebar() {
         <div className="flex h-16 items-center gap-2 border-b border-emerald-500/20 px-6">
           <Shield className="h-8 w-8 text-emerald-500" />
           <div>
-            <span className="text-lg font-bold text-white">TSVI Admin</span>
+            <span className="text-lg font-bold text-white">INVESTMENT HOLDINGS, LLC Admin</span>
             <p className="text-xs text-zinc-500">Control Panel</p>
           </div>
         </div>

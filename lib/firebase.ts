@@ -5,12 +5,12 @@ import { getAuth, type Auth } from "firebase/auth"
 import { getFirestore, type Firestore } from "firebase/firestore"
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCI_kui2FsS249TJyfzi-Z10ksRNk8Tj1Q",
-  authDomain: "tsvi-investments.firebaseapp.com",
-  projectId: "tsvi-investments",
-  storageBucket: "tsvi-investments.firebasestorage.app",
-  messagingSenderId: "251861957646",
-  appId: "1:251861957646:web:251a468323b362d771905f",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: "investment-holdings.firebaseapp.com",
+  projectId: "investment-holdings",
+  storageBucket: "investment-holdings.firebasestorage.app",
+  messagingSenderId: "496714313908",
+  appId: "1:496714313908:web:39828b27a6e43e115027e1",
 }
 
 let _app: FirebaseApp | undefined

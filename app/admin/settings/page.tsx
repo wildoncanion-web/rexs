@@ -12,15 +12,15 @@ import { Save, Shield, Bell, Mail, Globe } from "lucide-react"
 
 export default function AdminSettingsPage() {
   const [settings, setSettings] = useState({
-    siteName: "TSVI Investments",
-    supportEmail: "support@tsvi-investments.com",
+    siteName: "INVESTMENT HOLDINGS, LLC",
+    supportEmail: "support@investmentholdingsllc.org",
     maintenanceMode: false,
     emailNotifications: true,
     depositNotifications: true,
     withdrawalNotifications: true,
     minDeposit: "100",
     maxDeposit: "1000000",
-    welcomeMessage: "Welcome to TSVI Investments! Start your crypto investment journey with us today.",
+    welcomeMessage: "Welcome to INVESTMENT HOLDINGS, LLC! Start your crypto investment journey with us today.",
   })
 
   const handleSave = () => {

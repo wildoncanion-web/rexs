@@ -93,7 +93,7 @@ export default function AdminWithdrawalsPage() {
 
       toast({
         title: "OTP Generated",
-        description: `OTP ${otp} generated for ${withdrawal.userEmail}. Share this via live chat or email.`,
+        description: `OTP ${otp} generated for ${withdrawal.userEmail}. Share this by email.`,
       })
     } catch (err) {
       console.error("Error generating OTP:", err)
@@ -427,7 +427,7 @@ export default function AdminWithdrawalsPage() {
                 OTP Generated
               </DialogTitle>
               <DialogDescription className="text-zinc-500">
-                Share this OTP with the user via live chat or email
+                Share this OTP with the user by email
               </DialogDescription>
             </DialogHeader>
             <div className="space-y-4">

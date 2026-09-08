@@ -10,7 +10,7 @@ const testimonials = [
     role: "Investor since 2023",
     image: "/professional-white-man-portrait.jpg",
     content:
-      "TSVI Investments has transformed my portfolio. The returns are consistent and the platform is incredibly easy to use.",
+      "INVESTMENT HOLDINGS, LLC has transformed my portfolio. The returns are consistent and the platform is incredibly easy to use.",
     rating: 5,
   },
   {
@@ -26,7 +26,7 @@ const testimonials = [
     role: "Investor since 2023",
     image: "/professional-white-businessman-portrait.jpg",
     content:
-      "The customer support is exceptional and withdrawals are processed within hours. Highly recommend TSVI to serious investors.",
+      "The customer support is exceptional and withdrawals are processed within hours. Highly recommend INVESTMENT HOLDINGS, LLC to serious investors.",
     rating: 5,
   },
 ]

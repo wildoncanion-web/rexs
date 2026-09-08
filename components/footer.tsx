@@ -8,17 +8,17 @@ export function Footer() {
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center gap-2">
               <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
-                <span className="text-lg font-bold text-primary-foreground">T</span>
+                <span className="text-lg font-bold text-primary-foreground">IT</span>
               </div>
-              <span className="text-xl font-bold">TSVI Investments</span>
+              <span className="text-xl font-bold">INVESTMENT HOLDINGS, LLC</span>
             </div>
             <p className="mt-4 max-w-md text-sm text-muted-foreground">
               Your trusted partner in cryptocurrency investments. We provide secure, transparent, and profitable
               investment solutions in BTC, ETH, USDC, USDT, LTC, and DOGE.
             </p>
             <p className="mt-3 text-sm text-muted-foreground">
-              <a href="mailto:support@tsviinvestments.com" className="hover:text-primary transition-colors">
-                support@tsviinvestments.com
+              <a href="mailto:support@investmentholdingsllc.org" className="hover:text-primary transition-colors">
+                support@investmentholdingsllc.org
               </a>
             </p>
           </div>
@@ -66,7 +66,7 @@ export function Footer() {
 
         <div className="mt-12 border-t border-border pt-8">
           <p className="text-center text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} TSVI Investments. All rights reserved.
+            &copy; {new Date().getFullYear()} INVESTMENT HOLDINGS, LLC. All rights reserved.
           </p>
         </div>
       </div>

@@ -78,7 +78,7 @@ export function CTASection() {
               }`}
               style={{ transitionDelay: "400ms" }}
             >
-              Join thousands of investors who trust TSVI Investments for their cryptocurrency portfolio management.
+              Join thousands of investors who trust INVESTMENT HOLDINGS, LLC for their cryptocurrency portfolio management.
             </p>
 
             <div
