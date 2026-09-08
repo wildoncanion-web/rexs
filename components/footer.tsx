@@ -21,6 +21,11 @@ export function Footer() {
                 support@investmentholdingsllc.org
               </a>
             </p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              325 E. Grand River Ave., Ste. 275
+              <br />
+              East Lansing, MI 48823
+            </p>
           </div>
 
           <div>
