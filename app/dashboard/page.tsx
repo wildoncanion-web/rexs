@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Area, AreaChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
-import { Bell, ChevronDown, Loader2, Search, Shield, TrendingDown, TrendingUp } from "lucide-react"
+import { Bell, ChevronDown, Loader2, Plus, Search, Shield, TrendingDown, TrendingUp } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 import { DashboardHeader } from "@/components/dashboard/dashboard-header"
 import { Button } from "@/components/ui/button"
@@ -74,7 +74,10 @@ export default function DashboardPage() {
             <h1 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">Good morning, {displayName}</h1>
             <p className="mt-1 text-sm text-muted-foreground">Here&apos;s what&apos;s happening with your investments today.</p>
           </div>
-          {isAdmin && <Link href="/admin"><Button variant="outline" className="gap-2"><Shield data-icon="inline-start" /> Admin panel</Button></Link>}
+          <div className="flex items-center gap-3">
+            <Link href="/dashboard/deposit"><Button className="gap-2 bg-primary text-primary-foreground hover:bg-primary/90"><Plus data-icon="inline-start" /> Deposit</Button></Link>
+            {isAdmin && <Link href="/admin"><Button variant="outline" className="gap-2"><Shield data-icon="inline-start" /> Admin panel</Button></Link>}
+          </div>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-[minmax(0,65fr)_minmax(300px,35fr)]">
