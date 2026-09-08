@@ -44,3 +44,22 @@ export function formatUSDateTime(input: DateInput): string {
   })
   return `${formatted} ET`
 }
+
+/** Current hour (0-23) in US Eastern Time, regardless of the visitor's device timezone. */
+export function getUSHour(): number {
+  const hourString = new Date().toLocaleString("en-US", {
+    timeZone: US_TIME_ZONE,
+    hour: "numeric",
+    hour12: false,
+  })
+  // "24" is returned for midnight in some environments; normalize it to 0.
+  return Number.parseInt(hourString, 10) % 24
+}
+
+/** "Good morning" / "Good afternoon" / "Good evening" based on the current US Eastern hour. */
+export function getUSGreeting(): string {
+  const hour = getUSHour()
+  if (hour < 12) return "Good morning"
+  if (hour < 18) return "Good afternoon"
+  return "Good evening"
+}
