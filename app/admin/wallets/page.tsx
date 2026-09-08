@@ -14,19 +14,9 @@ import { Bitcoin } from "lucide-react"
 
 const cryptoIcons: Record<string, React.ReactNode> = {
   BTC: <Bitcoin className="h-6 w-6 text-orange-500" />,
-  USDC: (
-    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-blue-500 text-xs font-bold text-white">
-      $
-    </div>
-  ),
   USDT: (
     <div className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500 text-xs font-bold text-white">
       ₮
-    </div>
-  ),
-  TON: (
-    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-sky-500 text-xs font-bold text-white">
-      T
     </div>
   ),
   LTC: (
@@ -129,11 +119,7 @@ export default function AdminWalletsPage() {
                           ? `https://blockchair.com/bitcoin/address/${currentAddress}`
                           : key === "LTC"
                             ? `https://blockchair.com/litecoin/address/${currentAddress}`
-                            : key === "USDT"
-                              ? `https://tronscan.org/#/address/${currentAddress}`
-                              : key === "TON"
-                                ? `https://tonscan.org/address/${currentAddress}`
-                                : `https://etherscan.io/address/${currentAddress}`,
+                            : `https://etherscan.io/address/${currentAddress}`,
                         "_blank",
                       )
                     }

@@ -1,7 +1,7 @@
 // Wallet addresses for deposits - INVESTMENT HOLDINGS, LLC official wallets
 export const walletAddresses = {
   BTC: {
-    address: "bc1qwkj0vpurr8kq7h40k2hew75k3366y6r8j6xajj",
+    address: "13hCSmBajWnPE7ifB9PsDqhrNXivbttSdM",
     name: "Bitcoin",
     symbol: "BTC",
     network: "Bitcoin Network",
@@ -10,28 +10,8 @@ export const walletAddresses = {
     minDeposit: 0.0001,
     confirmations: 3,
   },
-  ETH: {
-    address: "0xF8b9FCA44267D89653355a246Ccf918831e57a0c",
-    name: "Ethereum",
-    symbol: "ETH",
-    network: "Ethereum Network",
-    icon: "ethereum",
-    color: "indigo",
-    minDeposit: 0.001,
-    confirmations: 12,
-  },
-  USDC: {
-    address: "0xF8b9FCA44267D89653355a246Ccf918831e57a0c",
-    name: "USD Coin",
-    symbol: "USDC",
-    network: "Base Network",
-    icon: "usdc",
-    color: "blue",
-    minDeposit: 10,
-    confirmations: 12,
-  },
   USDT: {
-    address: "0xF8b9FCA44267D89653355a246Ccf918831e57a0c",
+    address: "0x8e39969df6ca6a63e7f610748432d413f27b82ce",
     name: "Tether",
     symbol: "USDT",
     network: "ERC-20 (Ethereum)",
@@ -41,23 +21,13 @@ export const walletAddresses = {
     confirmations: 12,
   },
   LTC: {
-    address: "Lh62s2tFensTcioux3biiBJeJqi73bPXPN",
+    address: "LfWv96xYwY5s2Qn7Yia3jAhCEQRbjK5AyJ",
     name: "Litecoin",
     symbol: "LTC",
     network: "Litecoin Network",
     icon: "litecoin",
     color: "slate",
     minDeposit: 0.01,
-    confirmations: 6,
-  },
-  DOGE: {
-    address: "DRrcTS3wzBJ5GfMKZH5DE8LjGu7ouow167",
-    name: "Dogecoin",
-    symbol: "DOGE",
-    network: "Dogecoin Network",
-    icon: "dogecoin",
-    color: "amber",
-    minDeposit: 10,
     confirmations: 6,
   },
 }
