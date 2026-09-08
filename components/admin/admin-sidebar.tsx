@@ -45,11 +45,11 @@ export function AdminSidebar() {
   return (
     <aside className="fixed left-0 top-0 z-40 h-screen w-64 border-r border-emerald-500/20 bg-zinc-950">
       <div className="flex h-full flex-col">
-        <div className="flex h-16 items-center gap-2 border-b border-emerald-500/20 px-6">
-          <Shield className="h-8 w-8 text-emerald-500" />
-          <div>
-            <span className="text-lg font-bold text-white">INVESTMENT HOLDINGS, LLC Admin</span>
-            <p className="text-xs text-zinc-500">Control Panel</p>
+        <div className="flex min-h-20 items-center gap-3 border-b border-emerald-500/20 px-6 py-4">
+          <Shield className="h-8 w-8 shrink-0 text-emerald-500" />
+          <div className="min-w-0">
+            <p className="text-sm font-bold leading-tight text-balance text-white">Investment Holdings, LLC</p>
+            <p className="text-xs text-zinc-500">Admin Control Panel</p>
           </div>
         </div>
 
