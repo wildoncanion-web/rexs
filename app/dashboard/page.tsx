@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Area, AreaChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts"
-import { Loader2, Plus, Shield, TrendingDown, TrendingUp, Wallet } from "lucide-react"
+import { LineChart, Loader2, Plus, Shield, TrendingDown, TrendingUp, Wallet } from "lucide-react"
 import { collection, getDocs, orderBy, query, where } from "firebase/firestore"
 import { useAuth } from "@/contexts/auth-context"
 import { getFirebaseDb } from "@/lib/firebase"
@@ -133,11 +133,17 @@ export default function DashboardPage() {
                 </div>
                 <div className="mt-8 flex flex-col gap-5">
                   <ToggleGroup type="single" value={range} onValueChange={(value) => value && setRange(value)} className="justify-start gap-1">
-                    {['1D', '1W', '1M', '1Y', 'ALL'].map((item) => <ToggleGroupItem key={item} value={item} className="h-8 rounded-full px-3 text-xs data-[state=on]:bg-secondary data-[state=on]:text-foreground">{item}</ToggleGroupItem>)}
+                    {['1D', '1W', '1M', '1Y', 'ALL'].map((item) => <ToggleGroupItem key={item} value={item} className="h-8 rounded-full px-3 text-xs text-muted-foreground data-[state=on]:bg-secondary data-[state=on]:text-foreground">{item}</ToggleGroupItem>)}
                   </ToggleGroup>
                   <div className="h-[260px] w-full">
                     {ledgerLoading ? (
                       <div className="flex h-full items-center justify-center"><Loader2 className="size-6 animate-spin text-muted-foreground" /></div>
+                    ) : ledger.length === 0 ? (
+                      <div className="flex h-full flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border text-center">
+                        <LineChart className="size-8 text-muted-foreground" />
+                        <p className="text-sm font-medium text-card-foreground">No activity yet</p>
+                        <p className="text-xs text-muted-foreground">Your balance history will appear here once you make a deposit.</p>
+                      </div>
                     ) : (
                       <ResponsiveContainer width="100%" height="100%">
                         <AreaChart data={performanceData} margin={{ top: 10, right: 8, left: -18, bottom: 0 }}>
