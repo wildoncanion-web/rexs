@@ -56,9 +56,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [adminStatus, setAdminStatus] = useState(false)
 
   useEffect(() => {
+    if (!process.env.NEXT_PUBLIC_FIREBASE_API_KEY) {
+      setLoading(false)
+      return
+    }
+
     const auth = getFirebaseAuth()
     const db = getFirebaseDb()
-
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user)
       setAdminStatus(isAdmin(user?.email))
