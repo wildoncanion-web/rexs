@@ -83,9 +83,9 @@ export default function RegisterPage() {
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
               <span className="text-xl font-bold text-primary-foreground">IT</span>
             </div>
-            <span className="text-2xl font-bold text-foreground">INVESTMENT HOLDINGS, LLC</span>
+            <span className="text-2xl font-bold text-card-foreground">INVESTMENT HOLDINGS, LLC</span>
           </Link>
-          <CardTitle className="text-2xl font-bold text-foreground">Create your account</CardTitle>
+          <CardTitle className="text-2xl font-bold text-card-foreground">Create your account</CardTitle>
           <CardDescription className="text-muted-foreground">Start your investment journey today</CardDescription>
         </CardHeader>
         <CardContent>
@@ -93,7 +93,7 @@ export default function RegisterPage() {
             {error && <div className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">{error}</div>}
 
             <div className="space-y-2">
-              <Label htmlFor="fullName" className="text-foreground">
+              <Label htmlFor="fullName" className="text-card-foreground">
                 Full Name
               </Label>
               <Input
@@ -103,12 +103,12 @@ export default function RegisterPage() {
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 required
-                className="bg-input border-border text-foreground placeholder:text-muted-foreground"
+                className="bg-input border-border text-card-foreground placeholder:text-muted-foreground"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-foreground">
+              <Label htmlFor="email" className="text-card-foreground">
                 Email
               </Label>
               <Input
@@ -118,12 +118,12 @@ export default function RegisterPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="bg-input border-border text-foreground placeholder:text-muted-foreground"
+                className="bg-input border-border text-card-foreground placeholder:text-muted-foreground"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-foreground">
+              <Label htmlFor="password" className="text-card-foreground">
                 Password
               </Label>
               <div className="relative">
@@ -134,12 +134,12 @@ export default function RegisterPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="bg-input border-border text-foreground placeholder:text-muted-foreground pr-10"
+                  className="bg-input border-border text-card-foreground placeholder:text-muted-foreground pr-10"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-card-foreground"
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -147,7 +147,7 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword" className="text-foreground">
+              <Label htmlFor="confirmPassword" className="text-card-foreground">
                 Confirm Password
               </Label>
               <Input
@@ -157,7 +157,7 @@ export default function RegisterPage() {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
-                className="bg-input border-border text-foreground placeholder:text-muted-foreground"
+                className="bg-input border-border text-card-foreground placeholder:text-muted-foreground"
               />
             </div>
 
