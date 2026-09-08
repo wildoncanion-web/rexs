@@ -19,7 +19,7 @@ interface Transaction {
 }
 
 export function RecentTransactions() {
-  const { user } = useAuth()
+  const { user, userProfile } = useAuth()
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -128,7 +128,7 @@ export function RecentTransactions() {
                   <div>
                     <p className="truncate text-sm font-medium capitalize text-foreground">{tx.type}</p>
                     <p className="text-sm text-muted-foreground">
-                      {formatUSDate(tx.createdAt)}
+                      {formatUSDate(tx.createdAt, userProfile?.timezone)}
                     </p>
                   </div>
                 </div>

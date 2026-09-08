@@ -82,7 +82,9 @@ export default function ProfilePage() {
                     <div className="flex items-center gap-2 rounded-lg border border-border bg-input p-3">
                       <Calendar className="h-4 w-4 text-muted-foreground" />
                       <span className="text-foreground">
-                        {userProfile?.createdAt ? formatUSDate(new Date(userProfile.createdAt)) : "N/A"}
+                        {userProfile?.createdAt
+                          ? formatUSDate(new Date(userProfile.createdAt), userProfile.timezone)
+                          : "N/A"}
                       </span>
                     </div>
                   </div>

@@ -833,7 +833,7 @@ export default function WithdrawPage() {
                             {withdrawal.amount} {withdrawal.crypto}
                           </p>
                           <p className="text-sm text-zinc-500">
-                            {formatUSDate(withdrawal.createdAt)}
+                            {formatUSDate(withdrawal.createdAt, userProfile?.timezone)}
                           </p>
                           {withdrawal.status === "pending_otp" && (
                             <p className="text-xs text-emerald-400 mt-1">Click to verify OTP</p>

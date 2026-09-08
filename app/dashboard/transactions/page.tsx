@@ -21,7 +21,7 @@ interface Transaction {
 }
 
 export default function TransactionsPage() {
-  const { user, loading } = useAuth()
+  const { user, userProfile, loading } = useAuth()
   const router = useRouter()
   const [transactions, setTransactions] = useState<Transaction[]>([])
   const [loadingTx, setLoadingTx] = useState(true)
@@ -150,7 +150,7 @@ export default function TransactionsPage() {
                         <div>
                           <p className="font-medium capitalize text-foreground">{tx.type}</p>
                           <p className="text-sm text-muted-foreground">
-                            {formatUSDate(tx.createdAt)}
+                            {formatUSDate(tx.createdAt, userProfile?.timezone)}
                           </p>
                           {tx.description && (
                             <p className="text-xs text-muted-foreground">{tx.description}</p>
