@@ -9,6 +9,7 @@ import { collection, getDocs, orderBy, query, where } from "firebase/firestore"
 import { useAuth } from "@/contexts/auth-context"
 import { getFirebaseDb } from "@/lib/firebase"
 import { cryptoToUsd } from "@/lib/crypto-prices"
+import { formatUSShortDate } from "@/lib/date"
 import { DashboardHeader } from "@/components/dashboard/dashboard-header"
 import { RecentTransactions } from "@/components/dashboard/recent-transactions"
 import { Button } from "@/components/ui/button"
@@ -66,15 +67,16 @@ export default function DashboardPage() {
     const points = [{ date: "Start", value: running }]
     for (const tx of ledger) {
       running += signedDelta(tx)
-      points.push({ date: new Date(tx.createdAt.seconds * 1000).toLocaleDateString(undefined, { month: "short", day: "numeric" }), value: running })
+      points.push({ date: formatUSShortDate(tx.createdAt), value: running })
     }
     return points
   }, [ledger, totalBalance])
 
   const todaysChange = useMemo(() => {
-    const startOfDay = new Date()
-    startOfDay.setHours(0, 0, 0, 0)
-    const cutoff = startOfDay.getTime() / 1000
+    // Determine "today" using US Eastern Time, not the visitor's local timezone.
+    const nowInUS = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }))
+    nowInUS.setHours(0, 0, 0, 0)
+    const cutoff = nowInUS.getTime() / 1000
     const signedDelta = (tx: LedgerTransaction) => (tx.type === "withdrawal" ? -tx.amount : tx.amount)
     return ledger.filter((tx) => tx.createdAt.seconds >= cutoff).reduce((sum, tx) => sum + signedDelta(tx), 0)
   }, [ledger])

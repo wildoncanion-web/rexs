@@ -16,6 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { collection, addDoc, Timestamp, getDocs, query, where, orderBy, doc, updateDoc } from "firebase/firestore"
 import { getFirebaseDb } from "@/lib/firebase"
 import { cryptoToUsd } from "@/lib/crypto-prices"
+import { formatUSDate } from "@/lib/date"
 
 const CRYPTO_OPTIONS = [
   { value: "BTC", label: "Bitcoin (BTC)", color: "text-orange-500" },
@@ -832,7 +833,7 @@ export default function WithdrawPage() {
                             {withdrawal.amount} {withdrawal.crypto}
                           </p>
                           <p className="text-sm text-zinc-500">
-                            {new Date(withdrawal.createdAt.seconds * 1000).toLocaleDateString()}
+                            {formatUSDate(withdrawal.createdAt)}
                           </p>
                           {withdrawal.status === "pending_otp" && (
                             <p className="text-xs text-emerald-400 mt-1">Click to verify OTP</p>

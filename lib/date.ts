@@ -1,0 +1,46 @@
+// Centralized date/time formatting so every timestamp in the app renders in US Eastern
+// Time with US (en-US) conventions, regardless of the visitor's device locale/timezone.
+
+const US_TIME_ZONE = "America/New_York"
+
+type SecondsTimestamp = { seconds: number }
+type DateInput = Date | SecondsTimestamp | number | string
+
+function toDate(input: DateInput): Date {
+  if (input instanceof Date) return input
+  if (typeof input === "number") return new Date(input)
+  if (typeof input === "string") return new Date(input)
+  return new Date(input.seconds * 1000)
+}
+
+/** e.g. "Jan 5, 2026" */
+export function formatUSDate(input: DateInput): string {
+  return toDate(input).toLocaleDateString("en-US", {
+    timeZone: US_TIME_ZONE,
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  })
+}
+
+/** e.g. "Jan 5" (used for compact chart axes) */
+export function formatUSShortDate(input: DateInput): string {
+  return toDate(input).toLocaleDateString("en-US", {
+    timeZone: US_TIME_ZONE,
+    month: "short",
+    day: "numeric",
+  })
+}
+
+/** e.g. "Jan 5, 2026, 3:45 PM ET" */
+export function formatUSDateTime(input: DateInput): string {
+  const formatted = toDate(input).toLocaleString("en-US", {
+    timeZone: US_TIME_ZONE,
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  })
+  return `${formatted} ET`
+}

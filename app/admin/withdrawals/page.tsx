@@ -15,6 +15,7 @@ import { ArrowUpFromLine, Key, CheckCircle, XCircle, Clock, Copy, RefreshCw, Sea
 import { useToast } from "@/hooks/use-toast"
 import { useSearchParams } from "next/navigation"
 import { Suspense } from "react"
+import { formatUSDate } from "@/lib/date"
 
 interface WithdrawalData {
   id: string
@@ -354,7 +355,7 @@ export default function AdminWithdrawalsPage() {
                     </TableCell>
                     <TableCell>{getStatusBadge(withdrawal.status)}</TableCell>
                     <TableCell className="text-zinc-400">
-                      {new Date(withdrawal.createdAt.seconds * 1000).toLocaleDateString()}
+                      {formatUSDate(withdrawal.createdAt)}
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">

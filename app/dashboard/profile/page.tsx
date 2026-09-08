@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { User, Mail, Calendar, Loader2 } from "lucide-react"
+import { formatUSDate } from "@/lib/date"
 
 export default function ProfilePage() {
   const { user, userProfile, loading } = useAuth()
@@ -81,7 +82,7 @@ export default function ProfilePage() {
                     <div className="flex items-center gap-2 rounded-lg border border-border bg-input p-3">
                       <Calendar className="h-4 w-4 text-muted-foreground" />
                       <span className="text-foreground">
-                        {userProfile?.createdAt ? new Date(userProfile.createdAt).toLocaleDateString() : "N/A"}
+                        {userProfile?.createdAt ? formatUSDate(new Date(userProfile.createdAt)) : "N/A"}
                       </span>
                     </div>
                   </div>

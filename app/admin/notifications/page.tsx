@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Bell, UserPlus, ArrowUpFromLine, ArrowDownToLine, CheckCircle, Eye, RefreshCw } from "lucide-react"
 import Link from "next/link"
+import { formatUSDateTime } from "@/lib/date"
 
 interface Notification {
   id: string
@@ -242,7 +243,7 @@ export default function AdminNotificationsPage() {
                         </p>
                       )}
                       <p className="text-xs text-zinc-600">
-                        {new Date(notif.createdAt.seconds * 1000).toLocaleString()}
+                        {formatUSDateTime(notif.createdAt)}
                       </p>
                     </div>
                     <div className="flex items-center gap-2">

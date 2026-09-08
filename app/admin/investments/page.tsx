@@ -8,6 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import { TrendingUp, Clock, DollarSign } from "lucide-react"
+import { formatUSDate } from "@/lib/date"
 
 interface InvestmentData {
   id: string
@@ -43,11 +44,7 @@ export default function AdminInvestmentsPage() {
 
   const formatDate = (timestamp: { seconds: number }) => {
     if (!timestamp) return "N/A"
-    return new Date(timestamp.seconds * 1000).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    })
+    return formatUSDate(timestamp)
   }
 
   const calculateProgress = (start: { seconds: number }, end: { seconds: number }) => {
