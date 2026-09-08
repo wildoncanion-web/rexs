@@ -9,7 +9,7 @@ import { collection, getDocs, orderBy, query, where } from "firebase/firestore"
 import { useAuth } from "@/contexts/auth-context"
 import { getFirebaseDb } from "@/lib/firebase"
 import { cryptoToUsd } from "@/lib/crypto-prices"
-import { formatUSShortDate, getUSGreeting } from "@/lib/date"
+import { formatUSShortDate, getGreeting } from "@/lib/date"
 import { DashboardHeader } from "@/components/dashboard/dashboard-header"
 import { RecentTransactions } from "@/components/dashboard/recent-transactions"
 import { Button } from "@/components/ui/button"
@@ -32,18 +32,22 @@ export default function DashboardPage() {
   const [ledger, setLedger] = useState<LedgerTransaction[]>([])
   const [ledgerLoading, setLedgerLoading] = useState(true)
   // Start null and set on mount to avoid a server/client hydration mismatch, since the
-  // greeting depends on the current time in US Eastern rather than any fixed server render.
+  // greeting depends on the current time where this person is, not any fixed server render.
   const [greeting, setGreeting] = useState<string | null>(null)
+
+  // The person's own time zone, captured at sign up/sign in. Falls back to their current
+  // browser time zone if it hasn't synced from their profile yet.
+  const timezone = userProfile?.timezone
 
   useEffect(() => {
     if (!loading && !user) router.push("/login")
   }, [user, loading, router])
 
   useEffect(() => {
-    setGreeting(getUSGreeting())
-    const interval = setInterval(() => setGreeting(getUSGreeting()), 60_000)
+    setGreeting(getGreeting(timezone))
+    const interval = setInterval(() => setGreeting(getGreeting(timezone)), 60_000)
     return () => clearInterval(interval)
-  }, [])
+  }, [timezone])
 
   useEffect(() => {
     const fetchLedger = async () => {
@@ -76,19 +80,20 @@ export default function DashboardPage() {
     const points = [{ date: "Start", value: running }]
     for (const tx of ledger) {
       running += signedDelta(tx)
-      points.push({ date: formatUSShortDate(tx.createdAt), value: running })
+      points.push({ date: formatUSShortDate(tx.createdAt, timezone), value: running })
     }
     return points
-  }, [ledger, totalBalance])
+  }, [ledger, totalBalance, timezone])
 
   const todaysChange = useMemo(() => {
-    // Determine "today" using US Eastern Time, not the visitor's local timezone.
-    const nowInUS = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }))
-    nowInUS.setHours(0, 0, 0, 0)
-    const cutoff = nowInUS.getTime() / 1000
+    // Determine "today" using this person's own time zone, not a fixed one.
+    const zone = timezone || Intl.DateTimeFormat().resolvedOptions().timeZone
+    const nowInZone = new Date(new Date().toLocaleString("en-US", { timeZone: zone }))
+    nowInZone.setHours(0, 0, 0, 0)
+    const cutoff = nowInZone.getTime() / 1000
     const signedDelta = (tx: LedgerTransaction) => (tx.type === "withdrawal" ? -tx.amount : tx.amount)
     return ledger.filter((tx) => tx.createdAt.seconds >= cutoff).reduce((sum, tx) => sum + signedDelta(tx), 0)
-  }, [ledger])
+  }, [ledger, timezone])
 
   const allocation = useMemo(() => {
     const holdings = userProfile?.holdings

@@ -15,6 +15,7 @@ import {
 import { doc, setDoc, getDoc, onSnapshot, addDoc, collection, Timestamp } from "firebase/firestore"
 import { getFirebaseAuth, getFirebaseDb } from "@/lib/firebase"
 import { isAdmin } from "@/lib/admin"
+import { getBrowserTimeZone } from "@/lib/date"
 
 interface UserProfile {
   uid: string
@@ -27,6 +28,10 @@ interface UserProfile {
   credits?: number
   bonus?: number
   profit?: number
+  /** IANA time zone captured from the person's browser, e.g. "Europe/London". Used to
+   *  personalize greetings and date/time displays to where they actually are. */
+  timezone?: string
+  locale?: string
   holdings: {
     BTC: number
     ETH: number
@@ -34,6 +39,14 @@ interface UserProfile {
     USDT: number
     LTC: number
     DOGE: number
+  }
+}
+
+/** Reads the current device's time zone/locale so it can be saved to the person's profile. */
+function getLocationContext() {
+  return {
+    timezone: getBrowserTimeZone(),
+    locale: typeof navigator !== "undefined" ? navigator.language : undefined,
   }
 }
 
@@ -77,6 +90,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         try {
           const profileRef = doc(db, "users", user.uid)
           const profileDoc = await getDoc(profileRef)
+          const location = getLocationContext()
           if (!profileDoc.exists()) {
             const newProfile: UserProfile = {
               uid: user.uid,
@@ -84,9 +98,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
               displayName: user.displayName || user.email!.split("@")[0],
               createdAt: new Date(),
               totalBalance: 0,
+              ...location,
               holdings: { BTC: 0, ETH: 0, USDC: 0, USDT: 0, LTC: 0, DOGE: 0 },
             }
             await setDoc(profileRef, newProfile)
+          } else if (location.timezone) {
+            // Refresh the stored time zone/locale on every sign-in so greetings and dates
+            // stay accurate even if the person has traveled since they last signed in.
+            await setDoc(profileRef, location, { merge: true })
           }
 
           // Live listener so balance/holdings changes made by an admin show up immediately,
@@ -124,6 +143,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       displayName: displayName,
       createdAt: new Date(),
       totalBalance: 0,
+      ...getLocationContext(),
       holdings: { BTC: 0, ETH: 0, USDC: 0, USDT: 0, LTC: 0, DOGE: 0 },
     }
 
@@ -185,6 +205,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     const profileDoc = await getDoc(doc(db, "users", result.user.uid))
 
+    const location = getLocationContext()
+
     if (!profileDoc.exists()) {
       const newProfile: UserProfile = {
         uid: result.user.uid,
@@ -192,13 +214,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         displayName: displayName || email.split("@")[0],
         createdAt: new Date(),
         totalBalance: 0,
+        ...location,
         holdings: { BTC: 0, ETH: 0, USDC: 0, USDT: 0, LTC: 0, DOGE: 0 },
       }
 
       await setDoc(doc(db, "users", result.user.uid), newProfile)
       setUserProfile(newProfile)
     } else {
-      setUserProfile(profileDoc.data() as UserProfile)
+      if (location.timezone) {
+        await setDoc(doc(db, "users", result.user.uid), location, { merge: true })
+      }
+      setUserProfile({ ...(profileDoc.data() as UserProfile), ...location })
     }
   }
 
