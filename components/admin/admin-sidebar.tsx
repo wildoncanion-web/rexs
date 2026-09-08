@@ -53,7 +53,7 @@ export function AdminSidebar() {
           </div>
         </div>
 
-        <nav className="flex-1 space-y-1 p-4">
+        <nav className="flex-1 space-y-1 overflow-y-auto p-4">
           {sidebarLinks.map((link) => {
             const isActive = pathname === link.href
             return (
@@ -74,7 +74,7 @@ export function AdminSidebar() {
           })}
         </nav>
 
-        <div className="border-t border-emerald-500/20 p-4">
+        <div className="shrink-0 border-t border-emerald-500/20 p-4">
           <div className="mb-3 rounded-lg bg-zinc-900/50 p-3">
             <p className="text-xs text-zinc-500">Logged in as</p>
             <p className="truncate text-sm font-medium text-white">{user?.email}</p>
