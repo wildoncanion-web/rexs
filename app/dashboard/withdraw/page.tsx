@@ -15,6 +15,7 @@ import { Loader2, ArrowUpFromLine, Wallet, AlertCircle, Clock, CheckCircle2, Shi
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { collection, addDoc, Timestamp, getDocs, query, where, orderBy, doc, updateDoc } from "firebase/firestore"
 import { getFirebaseDb } from "@/lib/firebase"
+import { cryptoToUsd } from "@/lib/crypto-prices"
 
 const CRYPTO_OPTIONS = [
   { value: "BTC", label: "Bitcoin (BTC)", color: "text-orange-500" },
@@ -368,11 +369,14 @@ export default function WithdrawPage() {
       if (withdrawalMethod === "crypto") {
         const newHoldings = { ...currentProfile.holdings }
         newHoldings[selectedCrypto as keyof typeof newHoldings] -= Number(amount)
-        
+
+        // amount is in crypto units (e.g. BTC) — convert to its USD value before touching dollar balances
+        const usdValue = cryptoToUsd(selectedCrypto, Number(amount))
+
         await updateDoc(doc(db, "users", user!.uid), {
           holdings: newHoldings,
-          totalBalance: (currentProfile.totalBalance || 0) - Number(amount),
-          availableBalance: (currentProfile.availableBalance || 0) - Number(amount),
+          totalBalance: (currentProfile.totalBalance || 0) - usdValue,
+          availableBalance: (currentProfile.availableBalance || 0) - usdValue,
         })
       } else {
         await updateDoc(doc(db, "users", user!.uid), {

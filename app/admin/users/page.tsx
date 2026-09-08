@@ -14,6 +14,13 @@ import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
+import { cryptoToUsd, formatCryptoAmount, getCryptoPrice, holdingsToUsd } from "@/lib/crypto-prices"
+
+const DEPOSIT_CRYPTO_OPTIONS = [
+  { value: "BTC", label: "Bitcoin (BTC)" },
+  { value: "USDT", label: "Tether (USDT - ERC20)" },
+  { value: "LTC", label: "Litecoin (LTC)" },
+]
 
 interface UserData {
   uid: string
@@ -96,7 +103,7 @@ export default function AdminUsersPage() {
     setDialogOpen(true)
   }
 
-  const handleQuickAction = (user: UserData, type: "deposit" | "bonus" | "credit") => {
+  const handleQuickAction = (user: UserData, type: "deposit" | "bonus" | "credit" | "profit") => {
     setEditingUser(user)
     setActionType(type)
     setActionAmount("")
@@ -104,6 +111,21 @@ export default function AdminUsersPage() {
     setActionNote("")
     setDialogOpen(true)
   }
+
+  // Total balance is always derived from crypto holdings' USD value plus credits, bonus, and profit —
+  // it is never entered directly, so it can't drift from what the user actually holds.
+  const computedTotalBalance =
+    holdingsToUsd({
+      BTC: editForm.BTC,
+      ETH: editForm.ETH,
+      USDC: editForm.USDC,
+      USDT: editForm.USDT,
+      LTC: editForm.LTC,
+      DOGE: editForm.DOGE,
+    }) +
+    editForm.credits +
+    editForm.bonus +
+    editForm.profit
 
   const handleSave = async () => {
     if (!editingUser) return
@@ -118,7 +140,7 @@ export default function AdminUsersPage() {
 
       await updateDoc(doc(db, "users", editingUser.uid), {
         displayName: editForm.displayName,
-        totalBalance: editForm.totalBalance,
+        totalBalance: computedTotalBalance,
         availableBalance: editForm.availableBalance,
         credits: editForm.credits,
         bonus: editForm.bonus,
@@ -174,8 +196,8 @@ export default function AdminUsersPage() {
         })
       }
 
-      if (editForm.totalBalance !== oldTotalBalance) {
-        const diff = editForm.totalBalance - oldTotalBalance
+      if (computedTotalBalance !== oldTotalBalance) {
+        const diff = computedTotalBalance - oldTotalBalance
         await addDoc(collection(db, "transactions"), {
           userId: editingUser.uid,
           userEmail: editingUser.email,
@@ -204,12 +226,15 @@ export default function AdminUsersPage() {
     const amount = Number.parseFloat(actionAmount)
 
     if (actionType === "deposit") {
-      // Add deposit and update user balance
+      // Amount is the crypto amount received (e.g. 0.05 BTC), converted to USD using the reference price
+      const usdValue = cryptoToUsd(actionCrypto, amount)
+
       await addDoc(collection(db, "deposits"), {
         userId: editingUser.uid,
         userEmail: editingUser.email,
         amount: amount,
         crypto: actionCrypto,
+        usdValue,
         status: "confirmed",
         note: actionNote || "Admin deposit",
         createdAt: Timestamp.now(),
@@ -222,8 +247,8 @@ export default function AdminUsersPage() {
         (newHoldings[actionCrypto as keyof typeof newHoldings] || 0) + amount
 
       await updateDoc(doc(db, "users", editingUser.uid), {
-        totalBalance: (editingUser.totalBalance || 0) + amount,
-        availableBalance: (editingUser.availableBalance || 0) + amount,
+        totalBalance: (editingUser.totalBalance || 0) + usdValue,
+        availableBalance: (editingUser.availableBalance || 0) + usdValue,
         holdings: newHoldings,
       })
 
@@ -232,9 +257,10 @@ export default function AdminUsersPage() {
         userId: editingUser.uid,
         userEmail: editingUser.email,
         type: "deposit",
-        amount: amount,
+        amount: usdValue,
+        cryptoAmount: amount,
         crypto: actionCrypto,
-        description: actionNote || "Admin deposit",
+        description: actionNote || `Admin deposit — ${formatCryptoAmount(actionCrypto, amount)}`,
         createdAt: Timestamp.now(),
       })
     } else if (actionType === "bonus") {
@@ -265,15 +291,17 @@ export default function AdminUsersPage() {
         createdAt: Timestamp.now(),
       })
     } else if (actionType === "profit") {
-      // Add profit and update holdings so user can withdraw
+      // Amount is the crypto amount credited as profit, converted to USD using the reference price
+      const usdValue = cryptoToUsd(actionCrypto, amount)
+
       const newHoldings = { ...editingUser.holdings }
       newHoldings[actionCrypto as keyof typeof newHoldings] =
         (newHoldings[actionCrypto as keyof typeof newHoldings] || 0) + amount
 
       await updateDoc(doc(db, "users", editingUser.uid), {
-        profit: (editingUser.profit || 0) + amount,
-        totalBalance: (editingUser.totalBalance || 0) + amount,
-        availableBalance: (editingUser.availableBalance || 0) + amount,
+        profit: (editingUser.profit || 0) + usdValue,
+        totalBalance: (editingUser.totalBalance || 0) + usdValue,
+        availableBalance: (editingUser.availableBalance || 0) + usdValue,
         holdings: newHoldings,
       })
 
@@ -281,9 +309,10 @@ export default function AdminUsersPage() {
         userId: editingUser.uid,
         userEmail: editingUser.email,
         type: "profit",
-        amount: amount,
+        amount: usdValue,
+        cryptoAmount: amount,
         crypto: actionCrypto,
-        description: actionNote || "Investment profit",
+        description: actionNote || `Investment profit — ${formatCryptoAmount(actionCrypto, amount)}`,
         createdAt: Timestamp.now(),
       })
     }
@@ -360,7 +389,16 @@ export default function AdminUsersPage() {
                     </div>
                   </TableCell>
                   <TableCell className="text-emerald-400 font-medium">
-                    ${(user.totalBalance || 0).toLocaleString()}
+                    <p>${(user.totalBalance || 0).toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
+                    <p className="text-xs font-normal text-zinc-500">
+                      {["BTC", "USDT", "LTC"]
+                        .map((crypto) => {
+                          const value = user.holdings?.[crypto as keyof typeof user.holdings] || 0
+                          return value > 0 ? formatCryptoAmount(crypto, value) : null
+                        })
+                        .filter(Boolean)
+                        .join(" · ") || "No crypto holdings"}
+                    </p>
                   </TableCell>
                   <TableCell className="text-sky-400">${(user.credits || 0).toLocaleString()}</TableCell>
                   <TableCell className="text-amber-400">${(user.bonus || 0).toLocaleString()}</TableCell>
@@ -482,6 +520,13 @@ export default function AdminUsersPage() {
             </DialogDescription>
           </DialogHeader>
 
+          {(actionType === "deposit" || actionType === "profit") && (
+            <div className="rounded-md border border-emerald-500/20 bg-emerald-500/5 px-3 py-2 text-xs text-emerald-400">
+              Enter the amount in crypto units the user actually sent/earned. The dollar value is calculated
+              automatically using the reference price for the selected coin.
+            </div>
+          )}
+
           {actionType === "edit" ? (
             <Tabs defaultValue="profile" className="w-full">
               <TabsList className="grid w-full grid-cols-3 bg-zinc-900">
@@ -522,14 +567,15 @@ export default function AdminUsersPage() {
                   <div className="grid gap-2">
                     <Label className="flex items-center gap-2">
                       <DollarSign className="h-4 w-4 text-emerald-500" />
-                      Total Balance ($)
+                      Total Balance ($) — auto-calculated
                     </Label>
                     <Input
-                      type="number"
-                      value={editForm.totalBalance}
-                      onChange={(e) => setEditForm({ ...editForm, totalBalance: Number(e.target.value) })}
-                      className="border-zinc-800 bg-zinc-900"
+                      type="text"
+                      readOnly
+                      value={`$${computedTotalBalance.toLocaleString(undefined, { maximumFractionDigits: 2 })}`}
+                      className="border-zinc-800 bg-zinc-900/50 text-zinc-400"
                     />
+                    <p className="text-xs text-zinc-500">Value of crypto holdings + credits + bonus + profit. Edit holdings below to change it.</p>
                   </div>
                   <div className="grid gap-2">
                     <Label className="flex items-center gap-2">
@@ -580,6 +626,10 @@ export default function AdminUsersPage() {
               </TabsContent>
 
               <TabsContent value="holdings" className="space-y-4 mt-4">
+                <p className="text-xs text-zinc-500">
+                  Enter each balance in the coin&apos;s own units. USD equivalents below use the reference prices in
+                  lib/crypto-prices.ts.
+                </p>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="grid gap-2">
                     <Label className="text-orange-400">BTC (Bitcoin)</Label>
@@ -590,6 +640,7 @@ export default function AdminUsersPage() {
                       onChange={(e) => setEditForm({ ...editForm, BTC: Number(e.target.value) })}
                       className="border-zinc-800 bg-zinc-900"
                     />
+                    <p className="text-xs text-zinc-500">≈ ${cryptoToUsd("BTC", editForm.BTC).toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
                   </div>
                   <div className="grid gap-2">
                     <Label className="text-indigo-400">ETH (Ethereum)</Label>
@@ -600,6 +651,7 @@ export default function AdminUsersPage() {
                       onChange={(e) => setEditForm({ ...editForm, ETH: Number(e.target.value) })}
                       className="border-zinc-800 bg-zinc-900"
                     />
+                    <p className="text-xs text-zinc-500">≈ ${cryptoToUsd("ETH", editForm.ETH).toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
                   </div>
                   <div className="grid gap-2">
                     <Label className="text-blue-400">USDC (USD Coin)</Label>
@@ -610,6 +662,7 @@ export default function AdminUsersPage() {
                       onChange={(e) => setEditForm({ ...editForm, USDC: Number(e.target.value) })}
                       className="border-zinc-800 bg-zinc-900"
                     />
+                    <p className="text-xs text-zinc-500">≈ ${cryptoToUsd("USDC", editForm.USDC).toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
                   </div>
                   <div className="grid gap-2">
                     <Label className="text-emerald-400">USDT (Tether)</Label>
@@ -620,6 +673,7 @@ export default function AdminUsersPage() {
                       onChange={(e) => setEditForm({ ...editForm, USDT: Number(e.target.value) })}
                       className="border-zinc-800 bg-zinc-900"
                     />
+                    <p className="text-xs text-zinc-500">≈ ${cryptoToUsd("USDT", editForm.USDT).toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
                   </div>
                   <div className="grid gap-2">
                     <Label className="text-slate-400">LTC (Litecoin)</Label>
@@ -630,6 +684,7 @@ export default function AdminUsersPage() {
                       onChange={(e) => setEditForm({ ...editForm, LTC: Number(e.target.value) })}
                       className="border-zinc-800 bg-zinc-900"
                     />
+                    <p className="text-xs text-zinc-500">≈ ${cryptoToUsd("LTC", editForm.LTC).toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
                   </div>
                   <div className="grid gap-2">
                     <Label className="text-amber-400">DOGE (Dogecoin)</Label>
@@ -640,23 +695,14 @@ export default function AdminUsersPage() {
                       onChange={(e) => setEditForm({ ...editForm, DOGE: Number(e.target.value) })}
                       className="border-zinc-800 bg-zinc-900"
                     />
+                    <p className="text-xs text-zinc-500">≈ ${cryptoToUsd("DOGE", editForm.DOGE).toLocaleString(undefined, { maximumFractionDigits: 2 })}</p>
                   </div>
                 </div>
               </TabsContent>
             </Tabs>
           ) : (
             <div className="space-y-4 py-4">
-              <div className="grid gap-2">
-                <Label>Amount ($)</Label>
-                <Input
-                  type="number"
-                  placeholder="Enter amount"
-                  value={actionAmount}
-                  onChange={(e) => setActionAmount(e.target.value)}
-                  className="border-zinc-800 bg-zinc-900"
-                />
-              </div>
-              {actionType === "deposit" && (
+              {(actionType === "deposit" || actionType === "profit") && (
                 <div className="grid gap-2">
                   <Label>Cryptocurrency</Label>
                   <Select value={actionCrypto} onValueChange={setActionCrypto}>
@@ -664,16 +710,32 @@ export default function AdminUsersPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="border-zinc-800 bg-zinc-950">
-                      <SelectItem value="BTC">Bitcoin (BTC)</SelectItem>
-                      <SelectItem value="ETH">Ethereum (ETH)</SelectItem>
-                      <SelectItem value="USDC">USD Coin (USDC)</SelectItem>
-                      <SelectItem value="USDT">Tether (USDT)</SelectItem>
-                      <SelectItem value="LTC">Litecoin (LTC)</SelectItem>
-                      <SelectItem value="DOGE">Dogecoin (DOGE)</SelectItem>
+                      {DEPOSIT_CRYPTO_OPTIONS.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
               )}
+              <div className="grid gap-2">
+                <Label>{actionType === "deposit" || actionType === "profit" ? `Amount (${actionCrypto})` : "Amount ($)"}</Label>
+                <Input
+                  type="number"
+                  step={actionType === "deposit" || actionType === "profit" ? "0.00000001" : "0.01"}
+                  placeholder={actionType === "deposit" || actionType === "profit" ? "0.00000000" : "Enter amount"}
+                  value={actionAmount}
+                  onChange={(e) => setActionAmount(e.target.value)}
+                  className="border-zinc-800 bg-zinc-900"
+                />
+                {(actionType === "deposit" || actionType === "profit") && actionAmount && !Number.isNaN(Number(actionAmount)) && (
+                  <p className="text-xs text-zinc-500">
+                    ≈ ${cryptoToUsd(actionCrypto, Number(actionAmount)).toLocaleString(undefined, { maximumFractionDigits: 2 })} USD
+                    at ${getCryptoPrice(actionCrypto).toLocaleString()} / {actionCrypto}
+                  </p>
+                )}
+              </div>
               <div className="grid gap-2">
                 <Label>Note (optional)</Label>
                 <Textarea
