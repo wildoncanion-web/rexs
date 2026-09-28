@@ -1,13 +1,21 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import Link from "next/link"
 import { collection, getDocs, query, orderBy, limit } from "firebase/firestore"
 import { getFirebaseDb } from "@/lib/firebase"
 import { AdminHeader } from "@/components/admin/admin-header"
 import { StatsCard } from "@/components/admin/stats-card"
-import { Users, DollarSign, ArrowDownToLine, TrendingUp, Activity } from "lucide-react"
+import { Users, DollarSign, ArrowDownToLine, TrendingUp, Activity, History } from "lucide-react"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
+import { formatUSDateTime } from "@/lib/date"
+import {
+  getTransactionIcon,
+  getTransactionIconColor,
+  getTransactionPrefix,
+  type Transaction,
+} from "@/lib/transactions"
 
 interface UserData {
   uid: string
@@ -30,6 +38,7 @@ interface DepositData {
 export default function AdminDashboard() {
   const [users, setUsers] = useState<UserData[]>([])
   const [deposits, setDeposits] = useState<DepositData[]>([])
+  const [transactions, setTransactions] = useState<Transaction[]>([])
   const [stats, setStats] = useState({
     totalUsers: 0,
     totalDeposits: 0,
@@ -55,6 +64,12 @@ export default function AdminDashboard() {
         ...doc.data(),
       })) as DepositData[]
       setDeposits(depositsData)
+
+      const transactionsQuery = query(collection(db, "transactions"), orderBy("createdAt", "desc"), limit(8))
+      const transactionsSnapshot = await getDocs(transactionsQuery)
+      setTransactions(
+        transactionsSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as Transaction[],
+      )
 
       const totalBalance = usersData.reduce((sum, user) => sum + (user.totalBalance || 0), 0)
       const pendingDeposits = depositsData.filter((d) => d.status === "pending").length
@@ -196,6 +211,77 @@ export default function AdminDashboard() {
               </TableBody>
             </Table>
           </div>
+        </div>
+
+        <div className="mt-8 rounded-xl border border-emerald-500/20 bg-zinc-900/50 p-6">
+          <div className="mb-4 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <History className="h-5 w-5 text-emerald-500" />
+              <h2 className="text-lg font-semibold text-white">Recent Transaction History</h2>
+            </div>
+            <Link href="/admin/transactions" className="text-sm font-medium text-emerald-400 hover:text-emerald-300">
+              View all
+            </Link>
+          </div>
+          <Table>
+            <TableHeader>
+              <TableRow className="border-zinc-800 hover:bg-transparent">
+                <TableHead className="text-zinc-500">Type</TableHead>
+                <TableHead className="text-zinc-500">User</TableHead>
+                <TableHead className="text-zinc-500">Date</TableHead>
+                <TableHead className="text-right text-zinc-500">Amount</TableHead>
+                <TableHead className="text-right text-zinc-500">Status</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {transactions.map((tx) => {
+                const Icon = getTransactionIcon(tx.type)
+                return (
+                  <TableRow key={tx.id} className="border-zinc-800 hover:bg-zinc-800/50">
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Icon className={`h-4 w-4 ${getTransactionIconColor(tx.type)}`} />
+                        <span className="capitalize text-white">{tx.type}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-zinc-400">{tx.userEmail || "N/A"}</TableCell>
+                    <TableCell className="text-zinc-400">{formatUSDateTime(tx.createdAt)}</TableCell>
+                    <TableCell
+                      className={`text-right font-medium ${
+                        tx.type === "withdrawal" ? "text-red-400" : "text-emerald-400"
+                      }`}
+                    >
+                      {getTransactionPrefix(tx.type)}${tx.amount.toLocaleString()} {tx.crypto || "USD"}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      {tx.status ? (
+                        <Badge
+                          className={
+                            tx.status === "completed" || tx.status === "confirmed"
+                              ? "bg-emerald-500/20 text-emerald-400"
+                              : tx.status === "pending"
+                                ? "bg-amber-500/20 text-amber-400"
+                                : "bg-red-500/20 text-red-400"
+                          }
+                        >
+                          {tx.status}
+                        </Badge>
+                      ) : (
+                        <span className="text-zinc-600">—</span>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                )
+              })}
+              {transactions.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center text-zinc-500">
+                    No transactions yet
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
         </div>
       </div>
     </div>

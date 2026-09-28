@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { collection, getDocs, doc, updateDoc, deleteDoc, addDoc, Timestamp } from "firebase/firestore"
+import { collection, getDocs, doc, updateDoc, deleteDoc, addDoc, query, where, orderBy, Timestamp } from "firebase/firestore"
 import { getFirebaseDb } from "@/lib/firebase"
 import { AdminHeader } from "@/components/admin/admin-header"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -9,12 +9,27 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
-import { Edit, Trash2, Search, DollarSign, Gift, ArrowDownToLine, CreditCard, Wallet, TrendingUp } from "lucide-react"
+import {
+  Edit,
+  Trash2,
+  Search,
+  DollarSign,
+  Gift,
+  ArrowDownToLine,
+  CreditCard,
+  Wallet,
+  TrendingUp,
+  History,
+  ArrowUpRight,
+  Loader2,
+} from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { cryptoToUsd, formatCryptoAmount, getCryptoPrice, holdingsToUsd } from "@/lib/crypto-prices"
+import { formatUSDateTime } from "@/lib/date"
+import { getTransactionIcon, getTransactionIconColor, getTransactionPrefix, type Transaction } from "@/lib/transactions"
 
 const DEPOSIT_CRYPTO_OPTIONS = [
   { value: "BTC", label: "Bitcoin (BTC)" },
@@ -52,6 +67,10 @@ export default function AdminUsersPage() {
   const [actionCrypto, setActionCrypto] = useState("USDT")
   const [actionNote, setActionNote] = useState("")
   const [dialogOpen, setDialogOpen] = useState(false)
+  const [historyOpen, setHistoryOpen] = useState(false)
+  const [historyUser, setHistoryUser] = useState<UserData | null>(null)
+  const [historyTransactions, setHistoryTransactions] = useState<Transaction[]>([])
+  const [historyLoading, setHistoryLoading] = useState(false)
   const [editForm, setEditForm] = useState({
     displayName: "",
     totalBalance: 0,
@@ -324,6 +343,23 @@ export default function AdminUsersPage() {
     fetchUsers()
   }
 
+  const handleViewHistory = async (user: UserData) => {
+    setHistoryUser(user)
+    setHistoryOpen(true)
+    setHistoryLoading(true)
+    try {
+      const db = getFirebaseDb()
+      const q = query(collection(db, "transactions"), where("userId", "==", user.uid), orderBy("createdAt", "desc"))
+      const snapshot = await getDocs(q)
+      setHistoryTransactions(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as Transaction[])
+    } catch (error) {
+      console.error("Error fetching user transaction history:", error)
+      setHistoryTransactions([])
+    } finally {
+      setHistoryLoading(false)
+    }
+  }
+
   const handleDelete = async (uid: string) => {
     if (confirm("Are you sure you want to delete this user? This action cannot be undone.")) {
       const db = getFirebaseDb()
@@ -453,6 +489,15 @@ export default function AdminUsersPage() {
                         title="Add Profit"
                       >
                         <TrendingUp className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-zinc-400 hover:text-white"
+                        onClick={() => handleViewHistory(user)}
+                        title="Transaction History"
+                      >
+                        <History className="h-4 w-4" />
                       </Button>
                       <Button
                         variant="ghost"
@@ -769,6 +814,82 @@ export default function AdminUsersPage() {
                   : actionType === "bonus"
                     ? "Add Bonus"
                     : "Add Credit"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={historyOpen} onOpenChange={setHistoryOpen}>
+        <DialogContent className="border-zinc-800 bg-zinc-950 text-white max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <History className="h-5 w-5 text-emerald-500" />
+              Transaction History: {historyUser?.displayName || historyUser?.email}
+            </DialogTitle>
+            <DialogDescription className="text-zinc-500">
+              Every admin-applied deposit, bonus, credit, profit, and withdrawal for this user
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="max-h-[60vh] space-y-2 overflow-y-auto py-2">
+            {historyLoading ? (
+              <div className="flex items-center justify-center py-12">
+                <Loader2 className="h-6 w-6 animate-spin text-emerald-500" />
+              </div>
+            ) : historyTransactions.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-12 text-center">
+                <ArrowUpRight className="h-8 w-8 text-zinc-600" />
+                <p className="mt-4 text-sm text-zinc-500">No transactions recorded for this user yet</p>
+              </div>
+            ) : (
+              historyTransactions.map((tx) => {
+                const Icon = getTransactionIcon(tx.type)
+                return (
+                  <div
+                    key={tx.id}
+                    className="flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-900/50 p-3"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-800">
+                        <Icon className={`h-4 w-4 ${getTransactionIconColor(tx.type)}`} />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium capitalize text-white">{tx.type}</p>
+                        <p className="text-xs text-zinc-500">{formatUSDateTime(tx.createdAt)}</p>
+                        {tx.description && <p className="text-xs text-zinc-500">{tx.description}</p>}
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p
+                        className={`text-sm font-semibold ${
+                          tx.type === "withdrawal" ? "text-red-400" : "text-emerald-400"
+                        }`}
+                      >
+                        {getTransactionPrefix(tx.type)}${tx.amount.toLocaleString()} {tx.crypto || "USD"}
+                      </p>
+                      {tx.status && (
+                        <Badge
+                          className={
+                            tx.status === "completed" || tx.status === "confirmed"
+                              ? "bg-emerald-500/20 text-emerald-400"
+                              : tx.status === "pending"
+                                ? "bg-amber-500/20 text-amber-400"
+                                : "bg-red-500/20 text-red-400"
+                          }
+                        >
+                          {tx.status}
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                )
+              })
+            )}
+          </div>
+
+          <div className="flex justify-end">
+            <Button variant="outline" onClick={() => setHistoryOpen(false)} className="border-zinc-700">
+              Close
             </Button>
           </div>
         </DialogContent>
