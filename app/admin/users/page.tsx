@@ -37,6 +37,12 @@ const DEPOSIT_CRYPTO_OPTIONS = [
   { value: "LTC", label: "Litecoin (LTC)" },
 ]
 
+/** Formats a Date as a `datetime-local` input value using local (not UTC) time. */
+function toDatetimeLocalValue(date: Date): string {
+  const pad = (n: number) => n.toString().padStart(2, "0")
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`
+}
+
 interface UserData {
   uid: string
   email: string
@@ -66,6 +72,7 @@ export default function AdminUsersPage() {
   const [actionAmount, setActionAmount] = useState("")
   const [actionCrypto, setActionCrypto] = useState("USDT")
   const [actionNote, setActionNote] = useState("")
+  const [transactionDate, setTransactionDate] = useState(() => toDatetimeLocalValue(new Date()))
   const [dialogOpen, setDialogOpen] = useState(false)
   const [historyOpen, setHistoryOpen] = useState(false)
   const [historyUser, setHistoryUser] = useState<UserData | null>(null)
@@ -119,6 +126,7 @@ export default function AdminUsersPage() {
       LTC: user.holdings?.LTC || 0,
       DOGE: user.holdings?.DOGE || 0,
     })
+    setTransactionDate(toDatetimeLocalValue(new Date()))
     setDialogOpen(true)
   }
 
@@ -128,6 +136,7 @@ export default function AdminUsersPage() {
     setActionAmount("")
     setActionCrypto("USDT")
     setActionNote("")
+    setTransactionDate(toDatetimeLocalValue(new Date()))
     setDialogOpen(true)
   }
 
@@ -149,6 +158,7 @@ export default function AdminUsersPage() {
   const handleSave = async () => {
     if (!editingUser) return
     const db = getFirebaseDb()
+    const transactionTimestamp = Timestamp.fromDate(new Date(transactionDate))
 
     try {
       // Track changes for transaction records
@@ -185,7 +195,7 @@ export default function AdminUsersPage() {
           amount: Math.abs(diff),
           description: diff > 0 ? "Credit added by admin" : "Credit removed by admin",
           status: "completed",
-          createdAt: Timestamp.now(),
+          createdAt: transactionTimestamp,
         })
       }
 
@@ -198,7 +208,7 @@ export default function AdminUsersPage() {
           amount: Math.abs(diff),
           description: diff > 0 ? "Bonus added by admin" : "Bonus removed by admin",
           status: "completed",
-          createdAt: Timestamp.now(),
+          createdAt: transactionTimestamp,
         })
       }
 
@@ -211,7 +221,7 @@ export default function AdminUsersPage() {
           amount: Math.abs(diff),
           description: diff > 0 ? "Profit added by admin" : "Profit adjusted by admin",
           status: "completed",
-          createdAt: Timestamp.now(),
+          createdAt: transactionTimestamp,
         })
       }
 
@@ -224,7 +234,7 @@ export default function AdminUsersPage() {
           amount: Math.abs(diff),
           description: "Balance adjusted by admin",
           status: "completed",
-          createdAt: Timestamp.now(),
+          createdAt: transactionTimestamp,
         })
       }
 
@@ -243,6 +253,7 @@ export default function AdminUsersPage() {
     if (!editingUser || !actionAmount) return
     const db = getFirebaseDb()
     const amount = Number.parseFloat(actionAmount)
+    const transactionTimestamp = Timestamp.fromDate(new Date(transactionDate))
 
     if (actionType === "deposit") {
       // Amount is the crypto amount received (e.g. 0.05 BTC), converted to USD using the reference price
@@ -256,8 +267,8 @@ export default function AdminUsersPage() {
         usdValue,
         status: "confirmed",
         note: actionNote || "Admin deposit",
-        createdAt: Timestamp.now(),
-        confirmedAt: Timestamp.now(),
+        createdAt: transactionTimestamp,
+        confirmedAt: transactionTimestamp,
         confirmedBy: "admin",
       })
 
@@ -280,7 +291,7 @@ export default function AdminUsersPage() {
         cryptoAmount: amount,
         crypto: actionCrypto,
         description: actionNote || `Admin deposit — ${formatCryptoAmount(actionCrypto, amount)}`,
-        createdAt: Timestamp.now(),
+        createdAt: transactionTimestamp,
       })
     } else if (actionType === "bonus") {
       await updateDoc(doc(db, "users", editingUser.uid), {
@@ -294,7 +305,7 @@ export default function AdminUsersPage() {
         type: "bonus",
         amount: amount,
         description: actionNote || "Admin bonus",
-        createdAt: Timestamp.now(),
+        createdAt: transactionTimestamp,
       })
     } else if (actionType === "credit") {
       await updateDoc(doc(db, "users", editingUser.uid), {
@@ -307,7 +318,7 @@ export default function AdminUsersPage() {
         type: "credit",
         amount: amount,
         description: actionNote || "Admin credit",
-        createdAt: Timestamp.now(),
+        createdAt: transactionTimestamp,
       })
     } else if (actionType === "profit") {
       // Amount is the crypto amount credited as profit, converted to USD using the reference price
@@ -332,7 +343,7 @@ export default function AdminUsersPage() {
         cryptoAmount: amount,
         crypto: actionCrypto,
         description: actionNote || `Investment profit — ${formatCryptoAmount(actionCrypto, amount)}`,
-        createdAt: Timestamp.now(),
+        createdAt: transactionTimestamp,
       })
     }
 
@@ -564,6 +575,23 @@ export default function AdminUsersPage() {
                       : "Add credits to the user's account"}
             </DialogDescription>
           </DialogHeader>
+
+          <div className="grid gap-2">
+            <Label className="flex items-center gap-2">
+              <History className="h-4 w-4 text-zinc-400" />
+              Transaction Date &amp; Time
+            </Label>
+            <Input
+              type="datetime-local"
+              value={transactionDate}
+              onChange={(e) => setTransactionDate(e.target.value)}
+              className="border-zinc-800 bg-zinc-900"
+            />
+            <p className="text-xs text-zinc-500">
+              Controls the timestamp recorded for any transaction history entries created by this action. Defaults to
+              now.
+            </p>
+          </div>
 
           {(actionType === "deposit" || actionType === "profit") && (
             <div className="rounded-md border border-emerald-500/20 bg-emerald-500/5 px-3 py-2 text-xs text-emerald-400">
