@@ -9,6 +9,7 @@ import {
   signInWithEmailLink,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  sendPasswordResetEmail,
   updateProfile,
   type User,
 } from "firebase/auth"
@@ -57,6 +58,7 @@ interface AuthContextType {
   isAdmin: boolean
   register: (email: string, password: string, displayName: string) => Promise<void>
   login: (email: string, password: string) => Promise<void>
+  resetPassword: (email: string) => Promise<void>
   sendSignInLink: (email: string, displayName?: string) => Promise<void>
   completeSignIn: (email: string, displayName?: string) => Promise<void>
   logout: () => Promise<void>
@@ -166,6 +168,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await signInWithEmailAndPassword(auth, email, password)
   }
 
+  const resetPassword = async (email: string) => {
+    const auth = getFirebaseAuth()
+    const currentOrigin = typeof window !== "undefined" ? window.location.origin : "http://localhost:3000"
+
+    await sendPasswordResetEmail(auth, email, {
+      url: `${currentOrigin}/login`,
+      handleCodeInApp: false,
+    })
+  }
+
   const sendSignInLink = async (email: string, displayName?: string) => {
     const auth = getFirebaseAuth()
     const currentOrigin = typeof window !== "undefined" ? window.location.origin : "http://localhost:3000"
@@ -255,6 +267,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         isAdmin: adminStatus,
         register,
         login,
+        resetPassword,
         sendSignInLink,
         completeSignIn,
         logout,
