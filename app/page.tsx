@@ -2,6 +2,7 @@ import Link from "next/link"
 import { ArrowUpRight, BarChart3, CheckCircle2, ChevronRight, CircleDollarSign, ShieldCheck, TrendingUp } from "lucide-react"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
+import { ChatSupport } from "@/components/landing/chat-support"
 
 const holdings = [
   { name: "US Equities", symbol: "VTI", value: "$86,420.18", change: "+12.4%", width: "w-[44%]", tone: "bg-primary" },
@@ -59,6 +60,7 @@ export default function HomePage() {
         <section className="mx-auto max-w-7xl px-6 py-16 lg:px-8"><div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]"><div><div className="flex items-end justify-between gap-4"><div><p className="text-sm font-semibold uppercase tracking-[0.18em] text-primary">Account activity</p><h2 className="mt-3 text-2xl font-semibold">Recent transactions</h2></div><Link href="/login" className="text-sm font-semibold text-primary">View account <ChevronRight className="ml-1 inline size-4" /></Link></div><div className="mt-6 overflow-hidden rounded-xl border border-border bg-card">{activity.map(([date, title, detail, amount]) => <div key={date} className="flex items-center justify-between gap-4 border-b border-border p-5 last:border-0"><div><p className="font-medium text-card-foreground">{title}</p><p className="mt-1 text-sm text-muted-foreground">{detail} · {date}</p></div><p className="font-medium text-primary">{amount}</p></div>)}</div></div><div className="rounded-xl bg-primary p-7 text-primary-foreground"><p className="text-sm font-semibold uppercase tracking-[0.18em] opacity-75">Your next move</p><h2 className="mt-4 text-3xl font-semibold">Make your portfolio work harder.</h2><p className="mt-4 leading-7 opacity-80">Start with a clearer view of your financial picture.</p><Link href="/register" className="mt-7 inline-flex items-center gap-2 rounded-md bg-primary-foreground px-4 py-3 font-semibold text-primary">Get started <ArrowUpRight className="size-4" /></Link></div></div></section>
       </main>
       <Footer />
+      <ChatSupport />
     </div>
   )
 }
